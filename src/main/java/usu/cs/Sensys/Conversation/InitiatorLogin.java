@@ -1,6 +1,5 @@
 package usu.cs.Sensys.Conversation;
 
-
 import usu.cs.Sensys.Messages.LoginReply;
 import usu.cs.Sensys.Messages.LoginRequest;
 import usu.cs.Sensys.Messages.LogoutReply;
@@ -40,11 +39,12 @@ public class InitiatorLogin extends InitiatorRRConversation {
 		Envelope envelop = null;
 		TransactionLock.lock();
 		{
-			MessageNumber conversationID = MessageNumber.Create();
+			ConversationId = MessageNumber.Create();
+			System.out.println(ConversationId);
 			MessageNumber messageID = MessageNumber.Create();
-			MyQueue = CommSubsystem.SetupConversationQueue(conversationID);
-			Message msg = new LoginRequest(_id,CommSubsystem.getMyEndpoint());
-			msg.setConversationId(conversationID);
+			MyQueue = CommSubsystem.SetupConversationQueue(ConversationId);
+			Message msg = new LoginRequest(_id, CommSubsystem.getMyEndpoint());
+			msg.setConversationId(ConversationId);
 			msg.setMessageNr(messageID);
 			envelop = new Envelope(msg, _endpoint);
 		}
@@ -59,7 +59,8 @@ public class InitiatorLogin extends InitiatorRRConversation {
 		while (waiting) {
 			// dequeue will wait until timeout is done
 			Envelope reply = MyQueue.Dequeue(TimeOut);
-			if (reply != null && !IsEnvelopeValid(reply)) {
+			if (reply == null) {
+
 				// no reply yet, resend the message
 				if (Retries < MaxRetries) {
 					// send envelop
@@ -71,15 +72,19 @@ public class InitiatorLogin extends InitiatorRRConversation {
 					waiting = false;
 					logger.debug("Maxxed out the retries");
 				}
+
 			} else {
-				// store the result in a volatile variable and exit, hope for
-				// the main process to read this result
-				LoginReply replyMessage = (LoginReply) reply.getMsg();
-				RespondedMessage = new LoginReply(replyMessage.isSuccess(),
-						replyMessage.getNote(), replyMessage.getEndPoint());
-				ErrorMessage = null; // this mean successfully received the
-										// data.
-				waiting = false;
+				if (IsEnvelopeValid(reply)) {
+					// store the result in a volatile variable and exit, hope
+					// for
+					// the main process to read this result
+					LoginReply replyMessage = (LoginReply) reply.getMsg();
+					RespondedMessage = new LoginReply(replyMessage.isSuccess(),
+							replyMessage.getNote(), replyMessage.getEndPoint());
+					ErrorMessage = null; // this mean successfully received the
+											// data.
+					waiting = false;
+				}
 			}
 		}
 	}

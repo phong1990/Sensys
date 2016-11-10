@@ -8,6 +8,9 @@ public class PublicEndpoint {
 		Host = host;
 		Port = port;
 	}
+	public PublicEndpoint() {
+		// TODO Auto-generated constructor stub
+	}
 	public String getHost() {
 		return Host;
 	}

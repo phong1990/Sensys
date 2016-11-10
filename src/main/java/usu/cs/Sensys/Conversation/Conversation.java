@@ -14,7 +14,7 @@ import usu.cs.Sensys.Messages.Message;
 import usu.cs.Sensys.SharedObjects.MessageNumber;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
 
-public abstract class Conversation implements Runnable{
+public abstract class Conversation implements Runnable {
 	final static Logger logger = Logger.getLogger(Conversation.class);
 	protected MessageNumber ConversationId;
 	protected PublicEndpoint RemoteEndPoint;
@@ -28,17 +28,20 @@ public abstract class Conversation implements Runnable{
 	protected PossibleState State = PossibleState.NotInitialized;
 	protected int Retries = 0;
 	protected boolean Wakeup = false;
-	public void wakeup(){
+
+	public void wakeup() {
 		Wakeup = true;
 	}
+
 	public int getRetries() {
 		return Retries;
 	}
+
 	public void increaseRetries() {
-		this.Retries = Retries+1;
+		this.Retries = Retries + 1;
 	}
 
-	protected void sendMessage(Envelope env){
+	protected void sendMessage(Envelope env) {
 		try {
 			CommSubsystem.Send(env);
 		} catch (UnsupportedEncodingException e) {
@@ -46,6 +49,7 @@ public abstract class Conversation implements Runnable{
 			ErrorMessage = "UnsupportedEncodingException";
 		}
 	}
+
 	public CommSubsystem getCommSubsystem() {
 		return CommSubsystem;
 	}
@@ -105,31 +109,29 @@ public abstract class Conversation implements Runnable{
 	public void setTimeOut(int timeOut) {
 		TimeOut = timeOut;
 	}
-    @Override
-    public void run() {
-		logger.debug(
-				"Launch of " + getClass().getName() + " thread name = " + Thread.currentThread().getName());    	
-    	Execute();
-    }
-    
-    public void Execute()
-    {
-//
-//    	  if (Initialize())
-              ExecuteDetails();
 
-          if (ErrorMessage == null)
-              State = PossibleState.Successed;
-          else
-          {
-              State = PossibleState.Failed;
-              logger.warn(ErrorMessage);
-          }
+	@Override
+	public void run() {
+		logger.debug("Launch of " + getClass().getName() + " thread name = "
+				+ Thread.currentThread().getName());
+		Execute();
+	}
 
-//          PostExecuteAction?.Invoke(context);
+	public void Execute() {
+		//
+		// if (Initialize())
+		ExecuteDetails();
 
-          CommSubsystem.CloseConversationQueue(ConversationId);
-    }
+		if (ErrorMessage == null)
+			State = PossibleState.Successed;
+		else {
+			State = PossibleState.Failed;
+			logger.warn(ErrorMessage);
+		}
+
+		// PostExecuteAction?.Invoke(context);
+		CommSubsystem.CloseConversationQueue(ConversationId);
+	}
 
 	protected abstract boolean Initialize();
 
@@ -160,5 +162,6 @@ public abstract class Conversation implements Runnable{
 
 		return (ErrorMessage == null);
 	}
+
 	protected abstract boolean isExpectedMessageType(String messageType);
 }

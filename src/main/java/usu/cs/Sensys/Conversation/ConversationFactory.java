@@ -98,7 +98,7 @@ public class ConversationFactory {
 				// TODO Auto-generated catch block
 
 				logger.error(
-						"Error in creating a responder conversation: {0} - "
+						"Error in creating a responder conversation: "+e.getClass().getName()+":"
 								+ e.getMessage());
 			}
 
@@ -113,7 +113,7 @@ public class ConversationFactory {
 		ResponderConversation conversation = null;
 		if (conversationClassName != null) {
 			conversation = (ResponderConversation) Class
-					.forName(conversationClassName).getConstructor(String.class)
+					.forName(conversationClassName).getConstructor()
 					.newInstance();
 
 			if (conversation != null) {

@@ -16,6 +16,9 @@ public class LoginRequest extends Request{
 		// TODO Auto-generated constructor stub
 		Identity = id;
 	}
+	public LoginRequest() {
+		// TODO Auto-generated constructor stub
+	}
 	@Override
 	public String getMessageType() {
 		// TODO Auto-generated method stub

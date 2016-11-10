@@ -12,12 +12,20 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonMethod;
+import org.codehaus.jackson.map.DeserializationConfig;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonWriter;
 
+import usu.cs.Sensys.SharedObjects.Identity;
 import usu.cs.Sensys.SharedObjects.MessageNumber;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
 
@@ -30,9 +38,11 @@ public abstract class Message {
 	public PublicEndpoint getEndPoint() {
 		return MyEndPoint;
 	}
+
 	public void setEndPoint(PublicEndpoint endPoint) {
 		MyEndPoint = endPoint;
 	}
+
 	private static final String[] MESSAGE_TYPES = {
 			AvailableSensorRequest.class.getName(),
 			EndSensorsRequest.class.getName(), HeartbeatReply.class.getName(),
@@ -69,9 +79,23 @@ public abstract class Message {
 		Message result = null;
 		if (bytes != null) {
 			try {
+				// dirty fix for getting class name
 				ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+				JsonReader reader = Json.createReader(bais);
+				JsonObject jsonobj = reader.readObject();
+				String messageType = jsonobj.getString("messageType");
+//				if (messageType.equals(LoginRequest.class.getName())) {
+//					
+//				}
+//				if (messageType.equals(LoginReply.class.getName())) {
+//
+//				}
 				ObjectMapper jsonMapper = new ObjectMapper();
-				result = (Message) jsonMapper.readValue(bais, Message.class);
+				jsonMapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES,
+	                     false);
+				bais.reset();
+				result = (Message) jsonMapper.readValue(bais,
+						Class.forName(messageType));
 			} catch (Exception ex) {
 				logger.warn("Except warning in decoding a message: {0} - "
 						+ ex.getMessage());

@@ -2,6 +2,7 @@ package usu.cs.Sensys.Main;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import usu.cs.Sensys.Conversation.CommProcessState;
 import usu.cs.Sensys.Conversation.CommSubsystem;
@@ -20,6 +21,7 @@ public class ServerSimulator {
 
 		try {
 			System.out.println("---- SENSYS server simulator ----");
+			br = new BufferedReader(new InputStreamReader(System.in));
 			communicationSubsystem.Start();
 			PublicEndpoint myEndpoint = communicationSubsystem.getMyEndpoint();
 			System.out.println("Openned server at " + myEndpoint.getHost() + ":"
@@ -33,8 +35,6 @@ public class ServerSimulator {
 
 				if ("exit".equalsIgnoreCase(input)) {
 					System.out.println("Exit!");
-					communicationSubsystem.Stop();
-					communicationSubsystem = null;
 					System.exit(0);
 				}
 				try {

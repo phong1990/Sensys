@@ -13,5 +13,7 @@ public class LoginReply extends Reply{
 		// TODO Auto-generated method stub
 		return this.getClass().getName();
 	}
-
+	public LoginReply() {
+		// TODO Auto-generated constructor stub
+	}
 }

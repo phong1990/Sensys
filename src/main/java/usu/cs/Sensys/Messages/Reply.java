@@ -8,6 +8,9 @@ public abstract class Reply extends Message{
 		Success = success;
 		Note = note;
 	}
+	public Reply() {
+		// TODO Auto-generated constructor stub
+	}
 	public boolean isSuccess() {
 		return Success;
 	}

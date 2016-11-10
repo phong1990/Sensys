@@ -98,7 +98,10 @@ public class MessageNumber {
 		SeqNumber = seqNumber;
 	}
 
-	private MessageNumber(short processID, short sequenceNumber) {
+	public MessageNumber() {
+		// TODO Auto-generated constructor stub
+	}
+	public MessageNumber(short processID, short sequenceNumber) {
 		ProcessID = processID;
 		SeqNumber = sequenceNumber;
 	}

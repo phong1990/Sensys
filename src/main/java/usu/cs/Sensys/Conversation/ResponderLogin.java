@@ -14,7 +14,9 @@ public class ResponderLogin extends ResponderRRConversation{
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+	public ResponderLogin() {
+		// TODO Auto-generated constructor stub
+	}
 	@Override
 	protected void ExecuteDetails() {
 		// TODO Auto-generated method stub
@@ -24,11 +26,11 @@ public class ResponderLogin extends ResponderRRConversation{
 		Envelope envelop = null;
 		TransactionLock.lock();
 		{
-			MessageNumber conversationID = MessageNumber.Create();
+			ConversationId = IncomingEnv.getMsg().getConversationId();
 			MessageNumber messageID = MessageNumber.Create();
-			MyQueue = CommSubsystem.SetupConversationQueue(conversationID);
+			MyQueue = CommSubsystem.SetupConversationQueue(ConversationId);
 			Message msg = new LoginReply(true, "", CommSubsystem.getMyEndpoint());
-			msg.setConversationId(conversationID);
+			msg.setConversationId(ConversationId);
 			msg.setMessageNr(messageID);
 			envelop = new Envelope(msg,IncomingEnv.getEndPoint());
 		}

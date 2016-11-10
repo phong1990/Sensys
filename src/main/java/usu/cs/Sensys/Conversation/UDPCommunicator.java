@@ -91,7 +91,7 @@ public class UDPCommunicator implements Runnable {
 				});
 				_receiveThread.start();
 
-				endpoint = new PublicEndpoint(IPAddress.getHostName(), portToTry);
+				endpoint = new PublicEndpoint(IPAddress.getHostAddress(), portToTry);
 			}
 		}
 		StartStopLock.unlock();
@@ -135,12 +135,14 @@ public class UDPCommunicator implements Runnable {
 					+ " to " + outgoingEnvelope.getEndPoint());
 
 			try {
+				
 				DatagramPacket sendPacket = new DatagramPacket(bytesToSend,
 						bytesToSend.length,
 						InetAddress.getByName(
 								outgoingEnvelope.getEndPoint().getHost()),
 						outgoingEnvelope.getEndPoint().getPort());
 				_myUdpClient.send(sendPacket);
+				
 				logger.debug("Send complete");
 			} catch (Exception err) {
 				error = new Error("Cannnot send a "

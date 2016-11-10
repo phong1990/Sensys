@@ -12,9 +12,10 @@ import usu.cs.Sensys.Conversation.ConversationFactory;
 import usu.cs.Sensys.Conversation.InitiatorLogin;
 import usu.cs.Sensys.Conversation.ResponderLogin;
 import usu.cs.Sensys.Messages.LoginReply;
+import usu.cs.Sensys.util.ManualResetEvent;
 
 public class AppSimulator {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		BufferedReader br = null;
 
 		CommProcessState processState = new CommProcessState();
@@ -52,19 +53,17 @@ public class AppSimulator {
 					communicationSubsystem = null;
 					System.exit(0);
 				}
-
-				try {
-					Thread.sleep(500);
-					LoginReply result = loginConvo.getResult();
-					if (result != null) {
-						System.out.println("Login Successfull on server at: "
-								+ result.getEndPoint().getHost() + ":"
-								+ result.getEndPoint().getPort());
-						loop = false;
-					}
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				ManualResetEvent _somethingEnqueued = new ManualResetEvent(
+						false);
+				_somethingEnqueued.waitOne(1000);
+				LoginReply result = loginConvo.getResult();
+				if (result != null) {
+					System.out.println("Login Successfull on server at: "
+							+ result.getEndPoint().getHost() + ":"
+							+ result.getEndPoint().getPort());
+					loop = false;
+				} else {
+					System.out.println("seems like no reply yet!");
 				}
 			}
 

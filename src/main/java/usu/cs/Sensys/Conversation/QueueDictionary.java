@@ -34,8 +34,8 @@ public class QueueDictionary {
 	public ConversationQueue Lookup(MessageNumber convId) {
 		logger.debug("Lookup for name=" + convId);
 
-		_activeQueues.get(convId);
-		return null;
+		
+		return _activeQueues.get(convId);
 	}
 
 	public void CloseQueue(MessageNumber queueId) {

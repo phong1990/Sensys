@@ -21,7 +21,8 @@ import usu.cs.Sensys.SharedObjects.PublicEndpoint;
 public class CommSubsystem {
 	final static Logger logger = Logger.getLogger(CommSubsystem.class);
 
-    private static final ExecutorService _threadPool = Executors.newCachedThreadPool();
+	private static final ExecutorService _threadPool = Executors
+			.newCachedThreadPool();
 	private UDPCommunicator _myUdpCommunicator;
 	private InetAddress _bestAddress;
 	private static final QueueDictionary _queueDictionary = QueueDictionary
@@ -31,9 +32,10 @@ public class CommSubsystem {
 	private final CommProcessState _processState;
 	private PublicEndpoint MyEndPoint = null;
 
-	public PublicEndpoint getMyEndpoint(){
+	public PublicEndpoint getMyEndpoint() {
 		return MyEndPoint;
 	}
+
 	public CommProcessState get_processState() {
 		return _processState;
 	}
@@ -76,7 +78,7 @@ public class CommSubsystem {
 	/// sometime after setting the MinPort, MaxPort, and ConversationFactory
 	/// </summary>
 	public void Initialize() {
-		//_conversationFactory.Initialize();
+		// _conversationFactory.Initialize();
 
 		_conversationFactory.setManagingSubsystem(this);
 		_myUdpCommunicator = new UDPCommunicator();
@@ -109,7 +111,9 @@ public class CommSubsystem {
 			_myUdpCommunicator.Stop();
 			_myUdpCommunicator = null;
 		}
-
+		_threadPool.shutdown();
+		while (!_threadPool.isTerminated()) {
+        }
 		logger.debug("Leaving Stop");
 	}
 
@@ -168,9 +172,13 @@ public class CommSubsystem {
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
+		System.out.println("The best local IP address is: "
+				+ _bestAddress.getHostAddress());
 		return _bestAddress;
 	}
-	public InitiatorLogin login(String iden, String pin, String host, int port) {
+
+	public InitiatorLogin login(String iden, String pin, String host,
+			int port) {
 		// TODO Auto-generated method stub
 		InitiatorLogin loginConvo = new InitiatorLogin(iden, pin, host, port);
 		loginConvo.setCommSubsystem(this);
