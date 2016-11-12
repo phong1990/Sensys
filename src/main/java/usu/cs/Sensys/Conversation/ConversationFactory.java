@@ -7,8 +7,12 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import usu.cs.Sensys.Messages.AvailableSensorRequest;
+import usu.cs.Sensys.Messages.HeartbeatRequest;
 import usu.cs.Sensys.Messages.LoginRequest;
 import usu.cs.Sensys.Messages.Message;
+import usu.cs.Sensys.Messages.MessageRequest;
+import usu.cs.Sensys.Messages.SensorGatheringRequest;
+import usu.cs.Sensys.Messages.SensorHandshakeRequest;
 
 public class ConversationFactory {
 	private static final Map<String, String> _typeMappings = new HashMap<>();
@@ -34,6 +38,21 @@ public class ConversationFactory {
 	private ConversationFactory() {
 		_typeMappings.put(LoginRequest.class.getName(),
 				ResponderLogin.class.getName());
+		_typeMappings.put(HeartbeatRequest.class.getName(),
+				ResponderHeartbeat.class.getName());
+		_typeMappings.put(SensorHandshakeRequest.class.getName(),
+				ResponderSensorHandshake.class.getName());
+		_typeMappings.put(SensorGatheringRequest.class.getName(),
+				ResponderSensorGathering.class.getName());
+		_typeMappings.put(MessageRequest.class.getName(),
+				ResponderMessage.class.getName());
+		_typeMappings.put(LoginRequest.class.getName(),
+				ResponderLogin.class.getName());
+		_typeMappings.put(LoginRequest.class.getName(),
+				ResponderLogin.class.getName());
+		
+		
+		
 //		_typeMappings.put(MessageType.EndSensorsRequest,
 //				"ResponderEndSensorsConversation");
 //		_typeMappings.put(MessageType.HeartBeatRequest,

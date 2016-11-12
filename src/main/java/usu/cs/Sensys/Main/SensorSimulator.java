@@ -12,6 +12,7 @@ import usu.cs.Sensys.Messages.LoginReply;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
 
 public class SensorSimulator {
+	
 	public static void main(String[] args) {
 	}
 

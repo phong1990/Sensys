@@ -1,19 +1,23 @@
 package usu.cs.Sensys.Conversation;
 
+import usu.cs.Sensys.Conversation.Conversation.PossibleState;
+import usu.cs.Sensys.Messages.HeartbeatReply;
+import usu.cs.Sensys.Messages.HeartbeatRequest;
 import usu.cs.Sensys.Messages.LoginReply;
 import usu.cs.Sensys.Messages.LoginRequest;
 import usu.cs.Sensys.Messages.LogoutReply;
 import usu.cs.Sensys.Messages.Message;
+import usu.cs.Sensys.SharedObjects.GPSLocation;
 import usu.cs.Sensys.SharedObjects.Identity;
 import usu.cs.Sensys.SharedObjects.MessageNumber;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
 
-public class InitiatorLogin extends InitiatorRRConversation {
-	private Identity _id;
+public class InitiatorHeartbeat extends InitiatorRRConversation{
+	private GPSLocation Location;
 	private PublicEndpoint _endpoint;
-	private volatile LoginReply RespondedMessage = null;
+	private volatile HeartbeatReply RespondedMessage = null;
 
-	public LoginReply getResult() {
+	public HeartbeatReply getResult() {
 		return RespondedMessage;
 	}
 
@@ -23,9 +27,9 @@ public class InitiatorLogin extends InitiatorRRConversation {
 		return false;
 	}
 
-	public InitiatorLogin(String iden, String pin, String host, int port) {
+	public InitiatorHeartbeat(GPSLocation loc, String host, int port) {
 		// TODO Auto-generated constructor stub
-		_id = new Identity(iden, pin);
+		Location = loc;
 		_endpoint = new PublicEndpoint(host, port);
 		TimeOut = 10000; // 10s
 		MaxRetries = 3;
@@ -40,7 +44,7 @@ public class InitiatorLogin extends InitiatorRRConversation {
 		TransactionLock.lock();
 		{
 			MessageNumber messageID = createQueue();
-			Message msg = new LoginRequest(_id, CommSubsystem.getMyEndpoint());
+			Message msg = new HeartbeatRequest(Location);
 			msg.setConversationId(ConversationId);
 			msg.setMessageNr(messageID);
 			envelop = new Envelope(msg, _endpoint);
@@ -65,9 +69,9 @@ public class InitiatorLogin extends InitiatorRRConversation {
 					// store the result in a volatile variable and exit, hope
 					// for
 					// the main process to read this result
-					LoginReply replyMessage = (LoginReply) reply.getMsg();
-					RespondedMessage = new LoginReply(replyMessage.isSuccess(),
-							replyMessage.getNote(), replyMessage.getEndPoint());
+					HeartbeatReply replyMessage = (HeartbeatReply) reply.getMsg();
+					RespondedMessage = new HeartbeatReply(replyMessage.isSuccess(),
+							replyMessage.getNote());
 					ErrorMessage = null; // this mean successfully received the
 											// data.
 					waiting = false;
@@ -81,7 +85,7 @@ public class InitiatorLogin extends InitiatorRRConversation {
 
 	@Override
 	public boolean handleReply(Envelope env) {
-		LogoutReply message = (LogoutReply) env.getMsg();
+		HeartbeatReply message = (HeartbeatReply) env.getMsg();
 		if (!message.isSuccess()) {
 			logger.info(message.getNote());
 			return false;
@@ -92,7 +96,6 @@ public class InitiatorLogin extends InitiatorRRConversation {
 	@Override
 	public boolean isExpectedMessageType(String messageType) {
 		// TODO Auto-generated method stub
-		return messageType.equals(LoginReply.class.getName());
+		return messageType.equals(HeartbeatReply.class.getName());
 	}
-
 }
