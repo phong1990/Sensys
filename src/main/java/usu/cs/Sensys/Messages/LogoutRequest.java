@@ -1,6 +1,6 @@
 package usu.cs.Sensys.Messages;
 
-public class LogoutRequest extends Request{
+public class LogoutRequest extends Request {
 
 	@Override
 	public String getMessageType() {
@@ -8,5 +8,8 @@ public class LogoutRequest extends Request{
 		return this.getClass().getName();
 	}
 
+	public LogoutRequest() {
+		// TODO Auto-generated constructor stub
+	}
 
 }

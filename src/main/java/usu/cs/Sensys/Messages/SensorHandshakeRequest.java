@@ -1,6 +1,6 @@
 package usu.cs.Sensys.Messages;
 
-public class SensorHandshakeRequest extends Request{
+public class SensorHandshakeRequest extends Request {
 
 	@Override
 	public String getMessageType() {
@@ -8,5 +8,8 @@ public class SensorHandshakeRequest extends Request{
 		return this.getClass().getName();
 	}
 
+	public SensorHandshakeRequest() {
+		// TODO Auto-generated constructor stub
+	}
 
 }

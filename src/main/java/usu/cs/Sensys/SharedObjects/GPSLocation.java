@@ -28,5 +28,8 @@ public class GPSLocation {
 	public void setTimeStamp(long timeStamp) {
 		TimeStamp = timeStamp;
 	}
+	public GPSLocation() {
+		// TODO Auto-generated constructor stub
+	}
 	
 }

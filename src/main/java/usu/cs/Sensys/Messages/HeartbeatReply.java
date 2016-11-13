@@ -1,6 +1,6 @@
 package usu.cs.Sensys.Messages;
 
-public class HeartbeatReply extends Reply{
+public class HeartbeatReply extends Reply {
 
 	public HeartbeatReply(boolean success, String note) {
 		super(success, note);
@@ -13,5 +13,7 @@ public class HeartbeatReply extends Reply{
 		return this.getClass().getName();
 	}
 
-
+	public HeartbeatReply() {
+		// TODO Auto-generated constructor stub
+	}
 }

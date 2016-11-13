@@ -14,6 +14,9 @@ public class ResponderMessage extends ResponderRRConversation{
 		return false;
 	}
 
+	public ResponderMessage() {
+		// TODO Auto-generated constructor stub
+	}
 	@Override
 	protected void ExecuteDetails() {
 		MessageRequest incomingMsg= (MessageRequest)IncomingEnv.getMsg();

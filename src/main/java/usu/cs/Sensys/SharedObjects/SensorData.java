@@ -23,4 +23,7 @@ public class SensorData {
 		Data = dat;
 		sensorType = type;
 	}
+	public SensorData() {
+		// TODO Auto-generated constructor stub
+	}
 }

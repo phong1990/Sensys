@@ -41,6 +41,7 @@ public class QueueDictionary {
 	public void CloseQueue(MessageNumber queueId) {
 		logger.debug("Remove Queue " + queueId);
 		_activeQueues.remove(queueId);
+		logger.debug("Removed queue");
 	}
 
 	public void ClearAllQueues() {

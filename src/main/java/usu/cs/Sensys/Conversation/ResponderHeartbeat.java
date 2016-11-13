@@ -6,12 +6,16 @@ import usu.cs.Sensys.Messages.LoginReply;
 import usu.cs.Sensys.Messages.Message;
 import usu.cs.Sensys.SharedObjects.MessageNumber;
 
-public class ResponderHeartbeat extends ResponderRRConversation{
+public class ResponderHeartbeat extends ResponderRRConversation {
 
 	@Override
 	protected boolean Initialize() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	public ResponderHeartbeat() {
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -27,13 +31,13 @@ public class ResponderHeartbeat extends ResponderRRConversation{
 			Message msg = new HeartbeatReply(true, "");
 			msg.setConversationId(ConversationId);
 			msg.setMessageNr(messageID);
-			envelop = new Envelope(msg,IncomingEnv.getEndPoint());
+			envelop = new Envelope(msg, IncomingEnv.getEndPoint());
 		}
 		TransactionLock.unlock();
 
 		// send envelop
 		sendMessage(envelop);
-		
+
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package usu.cs.Sensys.Messages;
 
-public class MessageReply extends Reply{
+public class MessageReply extends Reply {
 
 	public MessageReply(boolean success, String note) {
 		super(success, note);
@@ -13,5 +13,7 @@ public class MessageReply extends Reply{
 		return this.getClass().getName();
 	}
 
-
+	public MessageReply() {
+		// TODO Auto-generated constructor stub
+	}
 }

@@ -12,7 +12,9 @@ public class ResponderSensorGathering extends ResponderRRConversation{
 		// TODO Auto-generated method stub
 		return false;
 	}
-
+	public ResponderSensorGathering() {
+		// TODO Auto-generated constructor stub
+	}
 	@Override
 	protected void ExecuteDetails() {
 		// TODO Auto-generated method stub

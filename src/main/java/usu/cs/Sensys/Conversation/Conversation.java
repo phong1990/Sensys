@@ -130,6 +130,7 @@ public abstract class Conversation implements Runnable {
 		}
 
 		// PostExecuteAction?.Invoke(context);
+		MyQueue = null;
 		CommSubsystem.CloseConversationQueue(ConversationId);
 	}
 

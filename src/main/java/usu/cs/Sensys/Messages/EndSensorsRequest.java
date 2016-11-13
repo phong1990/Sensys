@@ -1,6 +1,6 @@
 package usu.cs.Sensys.Messages;
 
-public class EndSensorsRequest extends Request{
+public class EndSensorsRequest extends Request {
 
 	@Override
 	public String getMessageType() {
@@ -8,5 +8,8 @@ public class EndSensorsRequest extends Request{
 		return this.getClass().getName();
 	}
 
+	public EndSensorsRequest() {
+		// TODO Auto-generated constructor stub
+	}
 
 }

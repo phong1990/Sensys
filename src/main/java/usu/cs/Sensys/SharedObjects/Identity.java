@@ -19,4 +19,7 @@ public class Identity {
 		ID = iden;
 		Pin = pin;
 	}
+	public Identity() {
+		// TODO Auto-generated constructor stub
+	}
 }

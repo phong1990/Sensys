@@ -175,8 +175,8 @@ public class UDPCommunicator implements Runnable {
 
 	private Envelope ReceiveOne() {
 		Envelope result = null;
-
 		DatagramPacket receivePacket = receivePacket(Timeout);
+
 
 		if (receivePacket != null && receivePacket.getData().length > 0) {
 			byte[] receivedBytes = receivePacket.getData();
@@ -235,7 +235,7 @@ public class UDPCommunicator implements Runnable {
 					}
 				}
 			} catch (SocketTimeoutException err) {
-				logger.warn(err.getMessage());
+				logger.debug(err.getMessage());
 				receivePacket = null;
 			} catch (Exception err) {
 				logger.warn(err.getMessage());

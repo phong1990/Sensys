@@ -23,6 +23,9 @@ public class SensorGatheringRequest extends Request{
 		LastReadingTime = time;
 	}
 
+	public SensorGatheringRequest() {
+		// TODO Auto-generated constructor stub
+	}
 	@Override
 	public String getMessageType() {
 		// TODO Auto-generated method stub

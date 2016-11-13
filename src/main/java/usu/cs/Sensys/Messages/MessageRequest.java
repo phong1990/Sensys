@@ -3,6 +3,7 @@ package usu.cs.Sensys.Messages;
 public class MessageRequest extends Request {
 	private boolean isEmmergency = false;
 	private String Message;
+
 	@Override
 	public String getMessageType() {
 		// TODO Auto-generated method stub
@@ -27,4 +28,7 @@ public class MessageRequest extends Request {
 		return isEmmergency;
 	}
 
+	public MessageRequest() {
+		// TODO Auto-generated constructor stub
+	}
 }

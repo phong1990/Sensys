@@ -14,6 +14,9 @@ public class ResponderSensorHandshake extends ResponderRRConversation {
 		return false;
 	}
 
+	public ResponderSensorHandshake() {
+		// TODO Auto-generated constructor stub
+	}
 	@Override
 	protected void ExecuteDetails() {
 		// TODO Auto-generated method stub

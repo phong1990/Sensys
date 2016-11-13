@@ -16,7 +16,11 @@ import org.apache.log4j.Logger;
 import usu.cs.Sensys.Conversation.Conversation.PossibleState;
 import usu.cs.Sensys.Main.SensorManager;
 import usu.cs.Sensys.Messages.AvailableSensorRequest;
+import usu.cs.Sensys.Messages.HeartbeatRequest;
 import usu.cs.Sensys.Messages.LoginRequest;
+import usu.cs.Sensys.Messages.MessageRequest;
+import usu.cs.Sensys.Messages.SensorGatheringRequest;
+import usu.cs.Sensys.SharedObjects.GPSLocation;
 import usu.cs.Sensys.SharedObjects.MessageNumber;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
 import usu.cs.Sensys.SharedObjects.SensorData;
@@ -24,6 +28,7 @@ import usu.cs.Sensys.SharedObjects.SensorData;
 public class CommSubsystem {
 	final static Logger logger = Logger.getLogger(CommSubsystem.class);
 	private static CommSubsystem instance = null;
+	private static final int GLOBAL_TIMEOUT = 2000;
 
 	public static CommSubsystem getInstance() {
 		if (instance == null)
@@ -69,10 +74,46 @@ public class CommSubsystem {
 					// <unimplemented>
 
 					// now reply to him, saying we accept his login session
-					ResponderLogin loginConvo = (ResponderLogin) convo;
-					loginConvo.setIncomingEnv(env);
+					ResponderLogin specificConvo = (ResponderLogin) convo;
+					specificConvo.setIncomingEnv(env);
 					// put it in the threadpool and execute it
-					_threadPool.execute(loginConvo);
+					_threadPool.execute(specificConvo);
+				}
+				if (typeOfMessage.equals(MessageRequest.class.getName())) {
+					// first add the user to our business list so we know he
+					// will be sending data from now on
+					// <unimplemented>
+
+					// now reply to him, saying we accept his login session
+					ResponderMessage specificConvo = (ResponderMessage) convo;
+					specificConvo.setIncomingEnv(env);
+					// put it in the threadpool and execute it
+					_threadPool.execute(specificConvo);
+				}
+
+				if (typeOfMessage
+						.equals(SensorGatheringRequest.class.getName())) {
+					// first add the user to our business list so we know he
+					// will be sending data from now on
+					// <unimplemented>
+
+					// now reply to him, saying we accept his login session
+					ResponderSensorGathering specificConvo = (ResponderSensorGathering) convo;
+					specificConvo.setIncomingEnv(env);
+					// put it in the threadpool and execute it
+					_threadPool.execute(specificConvo);
+				}
+
+				if (typeOfMessage.equals(HeartbeatRequest.class.getName())) {
+					// first add the user to our business list so we know he
+					// will be sending data from now on
+					// <unimplemented>
+
+					// now reply to him, saying we accept his login session
+					ResponderHeartbeat specificConvo = (ResponderHeartbeat) convo;
+					specificConvo.setIncomingEnv(env);
+					// put it in the threadpool and execute it
+					_threadPool.execute(specificConvo);
 				}
 			}
 		} else {
@@ -101,6 +142,7 @@ public class CommSubsystem {
 
 		_conversationFactory.setManagingSubsystem(this);
 		_myUdpCommunicator = new UDPCommunicator();
+		_myUdpCommunicator.setTimeout(GLOBAL_TIMEOUT);
 
 		_processState.setState(CommProcessState.PossibleState.Initialized);
 	}
@@ -233,4 +275,11 @@ public class CommSubsystem {
 
 	}
 
+	public InitiatorHeartbeat sendHeartbeat(String host, int port,
+			GPSLocation loc) {
+		// TODO Auto-generated method stub
+		InitiatorHeartbeat heartbeatConvo = new InitiatorHeartbeat(loc, host,
+				port);
+		return (InitiatorHeartbeat) startConversation(heartbeatConvo);
+	}
 }

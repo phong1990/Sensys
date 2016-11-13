@@ -1,19 +1,17 @@
-package usu.cs.Sensys.Main;
+package usu.cs.Sensys;
+
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.InvocationTargetException;
+
+import org.junit.Test;
 
 import junit.framework.Assert;
-import usu.cs.Sensys.Conversation.CommProcessState;
 import usu.cs.Sensys.Conversation.CommSubsystem;
-import usu.cs.Sensys.Conversation.Conversation;
-import usu.cs.Sensys.Conversation.ConversationFactory;
 import usu.cs.Sensys.Conversation.InitiatorHeartbeat;
 import usu.cs.Sensys.Conversation.InitiatorLogin;
 import usu.cs.Sensys.Conversation.InitiatorSensorGathering;
-import usu.cs.Sensys.Conversation.ResponderLogin;
 import usu.cs.Sensys.Messages.HeartbeatReply;
 import usu.cs.Sensys.Messages.LoginReply;
 import usu.cs.Sensys.Messages.SensorGatheringReply;
@@ -22,22 +20,25 @@ import usu.cs.Sensys.SharedObjects.PublicEndpoint;
 import usu.cs.Sensys.SharedObjects.SensorData;
 import usu.cs.Sensys.util.ManualResetEvent;
 
-public class AppSimulator {
-	public static void main(String[] args) throws InterruptedException {
+public class CommunicationTest {
+
+	@Test
+	public void testCommunication() {
 		CommSubsystem communicationSubsystem = CommSubsystem.getInstance();
 		PublicEndpoint serverEP = new PublicEndpoint();
 		getServerParams(serverEP);
 		communicationSubsystem.Start();
 		login(communicationSubsystem, serverEP);
-		sendData(communicationSubsystem, serverEP);
 		heartbeat(communicationSubsystem, serverEP);
+		sendData(communicationSubsystem, serverEP);
 		if (communicationSubsystem != null) {
 			communicationSubsystem.Stop();
 			communicationSubsystem = null;
 		}
+
 	}
 
-	private static void sendData(CommSubsystem communicationSubsystem,
+	private void sendData(CommSubsystem communicationSubsystem,
 			PublicEndpoint serverEP) {
 		try {
 			SensorGatheringReply result = null;
@@ -53,13 +54,15 @@ public class AppSimulator {
 			} else {
 				System.out.println("seems like no reply yet!");
 			}
+			Assert.assertEquals(true, result.isSuccess());
+			Assert.assertEquals("", result.getNote());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private static void login(CommSubsystem communicationSubsystem,
+	private void login(CommSubsystem communicationSubsystem,
 			PublicEndpoint serverEP) {
 		try {
 			String testID = "ID";
@@ -79,13 +82,15 @@ public class AppSimulator {
 			} else {
 				System.out.println("seems like no reply yet!");
 			}
+			Assert.assertEquals(true, result.isSuccess());
+			Assert.assertEquals("", result.getNote());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private static void heartbeat(CommSubsystem communicationSubsystem,
+	private void heartbeat(CommSubsystem communicationSubsystem,
 			PublicEndpoint serverEP) {
 		try {
 			HeartbeatReply result = null;
@@ -98,21 +103,22 @@ public class AppSimulator {
 			// retries
 			result = heartbeatConvo.getResult();
 			if (result != null) {
-				System.out
-						.println("sending heartbeat Successfull on server ");
+				System.out.println("sending heartbeat Successfull on server ");
 			} else {
 				System.out.println("seems like no reply yet!");
 			}
+			Assert.assertEquals(true, result.isSuccess());
+			Assert.assertEquals("", result.getNote());
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	private static void getServerParams(PublicEndpoint serverEP) {
+	private void getServerParams(PublicEndpoint serverEP) {
 		BufferedReader br = null;
 		try {
-			System.out.println("---- SENSYS mobile app simulator ----");
+			System.out.println("---- SENSYS mobile app simulator (COMMUNICATION TESTER)----");
 			br = new BufferedReader(new InputStreamReader(System.in));
 
 			System.out.println("Server ip: ");
@@ -121,8 +127,7 @@ public class AppSimulator {
 			int port = Integer.parseInt(br.readLine());
 			serverEP.setHost(ip);
 			serverEP.setPort(port);
-			System.out.println("----- Logging in to server at "
-					+ serverEP.getHost() + ":" + serverEP.getPort() + " -----");
+			System.out.println("----- Logging in to server at ");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -135,4 +140,5 @@ public class AppSimulator {
 			}
 		}
 	}
+
 }
