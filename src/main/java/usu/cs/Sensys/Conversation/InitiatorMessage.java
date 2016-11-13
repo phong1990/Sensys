@@ -29,9 +29,9 @@ public class InitiatorMessage extends InitiatorRRConversation {
 		// TODO Auto-generated constructor stub
 		isEmmergency = emmergency;
 		_endpoint = new PublicEndpoint(host, port);
-		if (isEmmergency)
+		if (isEmmergency){
 			TimeOut = 5000; // 5s for emmergency messages
-		else
+		}else
 			TimeOut = 10000; // 10s
 		MaxRetries = 3;
 	}

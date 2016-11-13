@@ -1,13 +1,15 @@
 package usu.cs.Sensys.Main;
 
+import usu.cs.Sensys.Conversation.CommSubsystem;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
+import usu.cs.Sensys.SharedObjects.SensorData;
 
 public class SensorDataManager {
 	private boolean OCCUPIED = false;
 	private int SensorType = 0;
 	private PublicEndpoint ReciepientEndpoint = null;
 	private static SensorDataManager instance = null;
-
+	private CommSubsystem commSub = CommSubsystem.getInstance();
 	public static SensorDataManager getInstance() {
 		if (instance == null)
 			instance = new SensorDataManager();
@@ -45,5 +47,12 @@ public class SensorDataManager {
 					reciepientEndpoint.getHost(), reciepientEndpoint.getPort());
 		else
 			ReciepientEndpoint = null;
+	}
+	public void startSensorBroadcast(){
+		commSub.StartSensorBroadcast();
+	}
+	public void sendData(){
+		// send dummy data
+		commSub.sendData(ReciepientEndpoint,new SensorData(SensorType, "1234"));
 	}
 }

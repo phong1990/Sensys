@@ -14,12 +14,22 @@ import javax.xml.ws.Endpoint;
 import org.apache.log4j.Logger;
 
 import usu.cs.Sensys.Conversation.Conversation.PossibleState;
+import usu.cs.Sensys.Main.SensorManager;
+import usu.cs.Sensys.Messages.AvailableSensorRequest;
 import usu.cs.Sensys.Messages.LoginRequest;
 import usu.cs.Sensys.SharedObjects.MessageNumber;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
+import usu.cs.Sensys.SharedObjects.SensorData;
 
 public class CommSubsystem {
 	final static Logger logger = Logger.getLogger(CommSubsystem.class);
+	private static CommSubsystem instance = null;
+
+	public static CommSubsystem getInstance() {
+		if (instance == null)
+			instance = new CommSubsystem();
+		return instance;
+	}
 
 	private static final ExecutorService _threadPool = Executors
 			.newCachedThreadPool();
@@ -40,8 +50,8 @@ public class CommSubsystem {
 		return _processState;
 	}
 
-	public CommSubsystem(CommProcessState processState) {
-		_processState = processState;
+	public CommSubsystem() {
+		_processState = CommProcessState.getInstance();
 		Initialize();
 	}
 
@@ -70,6 +80,15 @@ public class CommSubsystem {
 			queue.Enqueue(env);
 		}
 
+	}
+
+	public static void handleBroadcastedMessage(Envelope env) {
+		SensorManager senMan = SensorManager.getInstance();
+
+		String typeOfMessage = env.getMsg().getMessageType();
+		if (typeOfMessage.equals(AvailableSensorRequest.class.getName())) {
+			senMan.shakeHandWithSensor((AvailableSensorRequest) env.getMsg());
+		}
 	}
 
 	/// <summary>
@@ -113,7 +132,7 @@ public class CommSubsystem {
 		}
 		_threadPool.shutdown();
 		while (!_threadPool.isTerminated()) {
-        }
+		}
 		logger.debug("Leaving Stop");
 	}
 
@@ -142,7 +161,7 @@ public class CommSubsystem {
 		// Implementation not shown
 	}
 
-	private InetAddress FindBestLocalIpAddress() {
+	public InetAddress FindBestLocalIpAddress() {
 		if (_bestAddress != null)
 			return _bestAddress;
 
@@ -181,8 +200,37 @@ public class CommSubsystem {
 			int port) {
 		// TODO Auto-generated method stub
 		InitiatorLogin loginConvo = new InitiatorLogin(iden, pin, host, port);
-		loginConvo.setCommSubsystem(this);
-		_threadPool.execute(loginConvo);
-		return loginConvo;
+		return (InitiatorLogin) startConversation(loginConvo);
 	}
+
+	public InitiatorSensorHandshake handshakeWithSensor(String host, int port) {
+		// TODO Auto-generated method stub
+		InitiatorSensorHandshake handshakeConvo = new InitiatorSensorHandshake(
+				host, port);
+		return (InitiatorSensorHandshake) startConversation(handshakeConvo);
+	}
+
+	public SensorDiscoveryBroadcast StartSensorBroadcast() {
+		// TODO Auto-generated method stub
+		SensorDiscoveryBroadcast broadcastConvo = new SensorDiscoveryBroadcast();
+		return (SensorDiscoveryBroadcast) startConversation(broadcastConvo);
+
+	}
+
+	private Conversation startConversation(Conversation convo) {
+		convo.setCommSubsystem(this);
+		_threadPool.execute(convo);
+		return convo;
+	}
+
+	public InitiatorSensorGathering sendData(PublicEndpoint reciepientEndpoint,
+			SensorData sensorData) {
+		// TODO Auto-generated method stub
+		InitiatorSensorGathering dataConvo = new InitiatorSensorGathering(
+				reciepientEndpoint.getHost(), reciepientEndpoint.getPort(),
+				sensorData);
+		return (InitiatorSensorGathering) startConversation(dataConvo);
+
+	}
+
 }

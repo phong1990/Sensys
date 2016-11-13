@@ -16,8 +16,7 @@ public class ServerSimulator {
 	public static void main(String[] args) {
 		BufferedReader br = null;
 
-		CommProcessState processState = new CommProcessState();
-		CommSubsystem communicationSubsystem = new CommSubsystem(processState);
+		CommSubsystem communicationSubsystem = CommSubsystem.getInstance();
 
 		try {
 			System.out.println("---- SENSYS server simulator ----");

@@ -69,7 +69,6 @@ public class ConversationFactory {
 //				"ResponderLogoutConversation");
 	}
 
-
 	public Conversation CreateFromMessage(Envelope envelope) {
 		// switch(envelope.getMsg().getMessageType()){
 		// case AvailableSensorRequest:

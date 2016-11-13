@@ -18,8 +18,7 @@ public class AppSimulator {
 	public static void main(String[] args) throws InterruptedException {
 		BufferedReader br = null;
 
-		CommProcessState processState = new CommProcessState();
-		CommSubsystem communicationSubsystem = new CommSubsystem(processState);
+		CommSubsystem communicationSubsystem = CommSubsystem.getInstance();
 
 		try {
 			System.out.println("---- SENSYS mobile app simulator ----");
