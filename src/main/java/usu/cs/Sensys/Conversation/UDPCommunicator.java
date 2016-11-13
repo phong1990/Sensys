@@ -26,6 +26,7 @@ public class UDPCommunicator implements Runnable {
 	private final static Lock StartStopLock = new ReentrantLock();
 	private DatagramSocket _myUdpClient = null;
 	private Thread _receiveThread = null;
+	protected static final Lock senderLock = new ReentrantLock();
 
 	public int getPort() {
 		if (_myUdpClient == null)
@@ -91,7 +92,8 @@ public class UDPCommunicator implements Runnable {
 				});
 				_receiveThread.start();
 
-				endpoint = new PublicEndpoint(IPAddress.getHostAddress(), portToTry);
+				endpoint = new PublicEndpoint(IPAddress.getHostAddress(),
+						portToTry);
 			}
 		}
 		StartStopLock.unlock();
@@ -126,32 +128,36 @@ public class UDPCommunicator implements Runnable {
 	public Error Send(Envelope outgoingEnvelope)
 			throws UnsupportedEncodingException {
 		Error error = null;
-		if (outgoingEnvelope == null || !outgoingEnvelope.isValidToSend())
-			logger.warn("Invalid Envelope or Message");
-		else {
-			byte[] bytesToSend = outgoingEnvelope.getMsg().Encode();
+		senderLock.lock();
+		{
+			if (outgoingEnvelope == null || !outgoingEnvelope.isValidToSend())
+				logger.warn("Invalid Envelope or Message");
+			else {
+				byte[] bytesToSend = outgoingEnvelope.getMsg().Encode();
 
-			logger.debug("Send out: " + new String(bytesToSend, "US-ASCII")
-					+ " to " + outgoingEnvelope.getEndPoint());
+				logger.debug("Send out: " + new String(bytesToSend, "US-ASCII")
+						+ " to " + outgoingEnvelope.getEndPoint());
 
-			try {
-				
-				DatagramPacket sendPacket = new DatagramPacket(bytesToSend,
-						bytesToSend.length,
-						InetAddress.getByName(
-								outgoingEnvelope.getEndPoint().getHost()),
-						outgoingEnvelope.getEndPoint().getPort());
-				_myUdpClient.send(sendPacket);
-				
-				logger.debug("Send complete");
-			} catch (Exception err) {
-				error = new Error("Cannnot send a "
-						+ outgoingEnvelope.getMsg().getMessageType() + " to "
-						+ outgoingEnvelope.getEndPoint() + ": "
-						+ err.getMessage());
-				logger.warn(error.getMessage());
+				try {
+
+					DatagramPacket sendPacket = new DatagramPacket(bytesToSend,
+							bytesToSend.length,
+							InetAddress.getByName(
+									outgoingEnvelope.getEndPoint().getHost()),
+							outgoingEnvelope.getEndPoint().getPort());
+					_myUdpClient.send(sendPacket);
+
+					logger.debug("Send complete");
+				} catch (Exception err) {
+					error = new Error("Cannnot send a "
+							+ outgoingEnvelope.getMsg().getMessageType()
+							+ " to " + outgoingEnvelope.getEndPoint() + ": "
+							+ err.getMessage());
+					logger.warn(error.getMessage());
+				}
 			}
 		}
+		senderLock.unlock();
 		return error;
 	}
 

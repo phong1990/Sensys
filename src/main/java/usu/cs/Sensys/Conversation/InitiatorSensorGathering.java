@@ -1,6 +1,7 @@
 package usu.cs.Sensys.Conversation;
 
 import usu.cs.Sensys.Conversation.Conversation.PossibleState;
+import usu.cs.Sensys.Main.SensorManager;
 import usu.cs.Sensys.Messages.Message;
 import usu.cs.Sensys.Messages.SensorGatheringReply;
 import usu.cs.Sensys.Messages.SensorGatheringRequest;
@@ -70,7 +71,6 @@ public class InitiatorSensorGathering extends InitiatorRRConversation{
 							.getMsg();
 					RespondedMessage = new SensorGatheringReply(
 							replyMessage.isSuccess(), replyMessage.getNote());
-					// add this sensor to the Sensor receiving List <unimplemented>
 					
 					ErrorMessage = null; // this mean successfully received the
 											// data.

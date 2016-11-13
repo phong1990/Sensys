@@ -1,10 +1,16 @@
 package usu.cs.Sensys.Messages;
 
 public class SensorHandshakeReply extends Reply{
-
-	public SensorHandshakeReply(boolean success, String note) {
+	private int SensorType;
+	public SensorHandshakeReply(boolean success, String note, int type) {
 		super(success, note);
+		SensorType = type;
 		// TODO Auto-generated constructor stub
+	}
+
+
+	public int getSensorType() {
+		return SensorType;
 	}
 
 

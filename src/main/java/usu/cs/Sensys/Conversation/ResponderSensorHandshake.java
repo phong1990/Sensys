@@ -38,9 +38,9 @@ public class ResponderSensorHandshake extends ResponderRRConversation {
 			Message msg = null;
 			if (occupied) {
 				msg = new SensorHandshakeReply(false,
-						"Other process has already occupied this sensor");
+						"Other process has already occupied this sensor",SensorDataManager.getInstance().getSensorType());
 			} else {
-				msg = new SensorHandshakeReply(true, "");
+				msg = new SensorHandshakeReply(true, "", SensorDataManager.getInstance().getSensorType());
 			}
 			msg.setConversationId(ConversationId);
 			msg.setMessageNr(messageID);

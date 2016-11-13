@@ -4,6 +4,7 @@ import usu.cs.Sensys.SharedObjects.PublicEndpoint;
 
 public class SensorDataManager {
 	private boolean OCCUPIED = false;
+	private int SensorType = 0;
 	private PublicEndpoint ReciepientEndpoint = null;
 	private static SensorDataManager instance = null;
 
@@ -11,6 +12,14 @@ public class SensorDataManager {
 		if (instance == null)
 			instance = new SensorDataManager();
 		return instance;
+	}
+	
+	public int getSensorType() {
+		return SensorType;
+	}
+
+	public void setSensorType(int sensorType) {
+		SensorType = sensorType;
 	}
 
 	private SensorDataManager() {

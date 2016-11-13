@@ -1,6 +1,7 @@
 package usu.cs.Sensys.Conversation;
 
 import usu.cs.Sensys.Conversation.Conversation.PossibleState;
+import usu.cs.Sensys.Main.SensorManager;
 import usu.cs.Sensys.Messages.LoginReply;
 import usu.cs.Sensys.Messages.LoginRequest;
 import usu.cs.Sensys.Messages.LogoutReply;
@@ -69,8 +70,10 @@ public class InitiatorSensorHandshake extends InitiatorRRConversation {
 					SensorHandshakeReply replyMessage = (SensorHandshakeReply) reply
 							.getMsg();
 					RespondedMessage = new SensorHandshakeReply(
-							replyMessage.isSuccess(), replyMessage.getNote());
-					// add this sensor to the Sensor receiving List <unimplemented>
+							replyMessage.isSuccess(), replyMessage.getNote(),replyMessage.getSensorType());
+					// add this sensor to the Sensor receiving List 
+					SensorManager senMan = SensorManager.getInstance();
+					senMan.addNewSensor(replyMessage.getSensorType(), replyMessage.getEndPoint());
 					
 					ErrorMessage = null; // this mean successfully received the
 											// data.
