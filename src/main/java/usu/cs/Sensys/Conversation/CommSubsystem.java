@@ -206,24 +206,26 @@ public class CommSubsystem {
 	public void ProcessIncomingEnvelope(Envelope env) {
 		// Implementation not shown
 	}
-    public static String getAWSIp() throws Exception {
-        URL whatismyip = new URL("http://checkip.amazonaws.com");
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(
-                    whatismyip.openStream()));
-            String ip = in.readLine();
-            return ip;
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+
+	public static String getAWSIp() throws Exception {
+		URL whatismyip = new URL("http://checkip.amazonaws.com");
+		BufferedReader in = null;
+		try {
+			in = new BufferedReader(
+					new InputStreamReader(whatismyip.openStream()));
+			String ip = in.readLine();
+			return ip;
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
 	public InetAddress FindBestLocalIpAddress() {
 		if (_bestAddress != null)
 			return _bestAddress;
@@ -234,9 +236,16 @@ public class CommSubsystem {
 
 			while (networkInterfaces.hasMoreElements()) {
 
+				
+				
+				
+				
+				
+				
+				////////
 				NetworkInterface networkInterface = networkInterfaces
 						.nextElement();
-
+				
 				byte[] hardwareAddress = networkInterface.getHardwareAddress();
 				if (null == hardwareAddress || 0 == hardwareAddress.length
 						|| (0 == hardwareAddress[0] && 0 == hardwareAddress[1]

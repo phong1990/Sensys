@@ -177,7 +177,6 @@ public class UDPCommunicator implements Runnable {
 		Envelope result = null;
 		DatagramPacket receivePacket = receivePacket(Timeout);
 
-
 		if (receivePacket != null && receivePacket.getData().length > 0) {
 			byte[] receivedBytes = receivePacket.getData();
 			InetAddress ep = receivePacket.getAddress();
@@ -186,6 +185,11 @@ public class UDPCommunicator implements Runnable {
 			Message message = Message.decode(receivedBytes);
 			if (message != null) {
 				result = new Envelope(message, sendersEndPoint);
+				System.out.println(("Just received message, Nr="
+						+ result.getMsg().getMessageNr() + ", Conv="
+						+ result.getMsg().getConversationId() + ", Type="
+						+ result.getMsg().getMessageType() + ", From="
+						+ result.getEndPoint().toString()));
 				logger.debug("Just received message, Nr="
 						+ result.getMsg().getMessageNr() + ", Conv="
 						+ result.getMsg().getConversationId() + ", Type="
