@@ -13,7 +13,7 @@ import usu.cs.Sensys.SharedObjects.PublicEndpoint;
  *
  */
 public class ServerSimulator {
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		BufferedReader br = null;
 
 		CommSubsystem communicationSubsystem = CommSubsystem.getInstance();

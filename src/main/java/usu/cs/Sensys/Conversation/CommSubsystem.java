@@ -1,10 +1,15 @@
 package usu.cs.Sensys.Conversation;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -152,9 +157,9 @@ public class CommSubsystem {
 	/// this method
 	/// sometime after calling Initalize.
 	/// </summary>
-	public void Start() {
+	public void Start() throws UnknownHostException, Exception {
 		logger.debug("Entering Start");
-		MyEndPoint = _myUdpCommunicator.Start(FindBestLocalIpAddress());
+		MyEndPoint = _myUdpCommunicator.Start(InetAddress.getByName(getAWSIp()));
 		logger.debug("Leaving Start");
 	}
 
@@ -202,7 +207,24 @@ public class CommSubsystem {
 	public void ProcessIncomingEnvelope(Envelope env) {
 		// Implementation not shown
 	}
-
+    public static String getAWSIp() throws Exception {
+        URL whatismyip = new URL("http://checkip.amazonaws.com");
+        BufferedReader in = null;
+        try {
+            in = new BufferedReader(new InputStreamReader(
+                    whatismyip.openStream()));
+            String ip = in.readLine();
+            return ip;
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 	public InetAddress FindBestLocalIpAddress() {
 		if (_bestAddress != null)
 			return _bestAddress;

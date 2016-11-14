@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.net.UnknownHostException;
 
 import junit.framework.Assert;
 import usu.cs.Sensys.Conversation.CommProcessState;
@@ -23,7 +24,7 @@ import usu.cs.Sensys.SharedObjects.SensorData;
 import usu.cs.Sensys.util.ManualResetEvent;
 
 public class AppSimulator {
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws UnknownHostException, Exception {
 		CommSubsystem communicationSubsystem = CommSubsystem.getInstance();
 		PublicEndpoint serverEP = new PublicEndpoint();
 		getServerParams(serverEP);

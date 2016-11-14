@@ -4,6 +4,7 @@ package usu.cs.Sensys;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.UnknownHostException;
 
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ import usu.cs.Sensys.util.ManualResetEvent;
 public class CommunicationTest {
 
 	@Test
-	public void testCommunication() {
+	public void testCommunication() throws UnknownHostException, Exception {
 		CommSubsystem communicationSubsystem = CommSubsystem.getInstance();
 		PublicEndpoint serverEP = new PublicEndpoint();
 		getServerParams(serverEP);
