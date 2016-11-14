@@ -9,7 +9,6 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -157,9 +156,9 @@ public class CommSubsystem {
 	/// this method
 	/// sometime after calling Initalize.
 	/// </summary>
-	public void Start() throws UnknownHostException, Exception {
+	public void Start() {
 		logger.debug("Entering Start");
-		MyEndPoint = _myUdpCommunicator.Start(InetAddress.getByName(getAWSIp()));
+		MyEndPoint = _myUdpCommunicator.Start(FindBestLocalIpAddress());
 		logger.debug("Leaving Start");
 	}
 

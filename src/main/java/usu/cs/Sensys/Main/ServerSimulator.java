@@ -23,8 +23,9 @@ public class ServerSimulator {
 			br = new BufferedReader(new InputStreamReader(System.in));
 			communicationSubsystem.Start();
 			PublicEndpoint myEndpoint = communicationSubsystem.getMyEndpoint();
-			System.out.println("Openned server at " + myEndpoint.getHost() + ":"
-					+ myEndpoint.getPort());
+			System.out.println(
+					"Openned server at " + communicationSubsystem.getAWSIp()
+							+ ":" + myEndpoint.getPort());
 
 			boolean loop = true;
 			while (loop) {
