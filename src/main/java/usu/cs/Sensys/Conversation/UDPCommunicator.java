@@ -14,6 +14,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.apache.log4j.Logger;
 
+import usu.cs.Sensys.Messages.LoginReply;
 import usu.cs.Sensys.Messages.Message;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
 
@@ -71,6 +72,7 @@ public class UDPCommunicator implements Runnable {
 			if (portToTry > 0) {
 				try {
 					_myUdpClient = new DatagramSocket(portToTry, IPAddress);
+					_myUdpClient.setBroadcast(true);
 					_started = true;
 				} catch (SocketException e) {
 					logger.warn("Except warning in starting UDP communicator:  "
@@ -183,13 +185,11 @@ public class UDPCommunicator implements Runnable {
 			PublicEndpoint sendersEndPoint = new PublicEndpoint(
 					ep.getHostAddress(), receivePacket.getPort());
 			Message message = Message.decode(receivedBytes);
+			
 			if (message != null) {
+
+				
 				result = new Envelope(message, sendersEndPoint);
-				System.out.println(("Just received message, Nr="
-						+ result.getMsg().getMessageNr() + ", Conv="
-						+ result.getMsg().getConversationId() + ", Type="
-						+ result.getMsg().getMessageType() + ", From="
-						+ result.getEndPoint().toString()));
 				logger.debug("Just received message, Nr="
 						+ result.getMsg().getMessageNr() + ", Conv="
 						+ result.getMsg().getConversationId() + ", Type="
@@ -224,8 +224,6 @@ public class UDPCommunicator implements Runnable {
 			}
 
 			try {
-
-				logger.debug("Try receive bytes from anywhere");
 
 				byte[] buffer = new byte[2048];
 				receivePacket = new DatagramPacket(buffer, buffer.length);

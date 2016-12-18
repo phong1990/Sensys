@@ -7,6 +7,7 @@ import usu.cs.Sensys.Messages.Message;
 import usu.cs.Sensys.SharedObjects.Identity;
 import usu.cs.Sensys.SharedObjects.MessageNumber;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
+import usu.cs.Sensys.util.PublicKeyManager;
 
 public class InitiatorLogin extends InitiatorRRConversation {
 	private Identity _id;
@@ -27,7 +28,7 @@ public class InitiatorLogin extends InitiatorRRConversation {
 		// TODO Auto-generated constructor stub
 		_id = new Identity(iden, pin);
 		_endpoint = new PublicEndpoint(host, port);
-		TimeOut = 10000; // 10s
+		TimeOut = 3000; // 10s
 		MaxRetries = 3;
 	}
 
@@ -66,18 +67,20 @@ public class InitiatorLogin extends InitiatorRRConversation {
 					// for
 					// the main process to read this result
 					LoginReply replyMessage = (LoginReply) reply.getMsg();
+					
 					RespondedMessage = new LoginReply(replyMessage.isSuccess(),
-							replyMessage.getNote(), replyMessage.getEndPoint());
+							replyMessage.getNote(), replyMessage.getEndPoint(),
+							replyMessage.getPublicKey());
+					// set the key
+					PublicKeyManager.getInstance().setKey(RespondedMessage.getPublicKey());
 					ErrorMessage = null; // this mean successfully received the
 											// data.
+
 					waiting = false;
 				}
 			}
 		}
 	}
-
-
-
 
 	@Override
 	public boolean handleReply(Envelope env) {

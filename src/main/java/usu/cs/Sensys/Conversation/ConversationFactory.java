@@ -148,13 +148,14 @@ public class ConversationFactory {
 		return conversation;
 	}
 
+	// only for responders
 	public <T extends Conversation> T CreateFromConversationType(
 			String conversationClassName)
 			throws InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException,
 			NoSuchMethodException, SecurityException, ClassNotFoundException {
 		T conversation = (T) Class.forName(conversationClassName)
-				.getConstructor(String.class).newInstance();
+				.getConstructor().newInstance();
 
 		if (conversation != null) {
 			conversation.setCommSubsystem(ManagingSubsystem);

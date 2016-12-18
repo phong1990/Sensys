@@ -1,5 +1,6 @@
 package usu.cs.Sensys.SharedObjects;
 
+
 public class PublicEndpoint {
 	private String Host = null;
 	private int Port = 0;
@@ -25,5 +26,20 @@ public class PublicEndpoint {
 	}
 	public String toString(){
 		return Host+":"+Port;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		if (obj instanceof PublicEndpoint) {
+			PublicEndpoint w = (PublicEndpoint) obj;
+			return Host.equals(w.Host) && Port == w.Port;
+		} else
+			return false;
+	}
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return Host.hashCode();
 	}
 }

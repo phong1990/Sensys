@@ -33,6 +33,7 @@ public class SensorDiscoveryBroadcast extends Conversation {
 
 	@Override
 	protected void ExecuteDetails() {
+		ManualResetEvent _somethingEnqueued = new ManualResetEvent(false);
 		State = PossibleState.Working;
 		// TODO Auto-generated method stub
 		// create login envelop
@@ -53,7 +54,7 @@ public class SensorDiscoveryBroadcast extends Conversation {
 		boolean waiting = true;
 		while (waiting) {
 			try {
-				monitor.wait(TimeOut);
+				_somethingEnqueued.waitOne(TimeOut);
 				if (!senDataMan.isOCCUPIED()) {
 					sendMessage(envelop);
 				} else
@@ -67,6 +68,7 @@ public class SensorDiscoveryBroadcast extends Conversation {
 		}
 	}
 
+	
 	@Override
 	public boolean isExpectedMessageType(String messageType) {
 		// TODO Auto-generated method stub

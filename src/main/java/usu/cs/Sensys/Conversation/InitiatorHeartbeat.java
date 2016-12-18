@@ -31,7 +31,7 @@ public class InitiatorHeartbeat extends InitiatorRRConversation{
 		// TODO Auto-generated constructor stub
 		Location = loc;
 		_endpoint = new PublicEndpoint(host, port);
-		TimeOut = 10000; // 10s
+		TimeOut = 3000; // 10s
 		MaxRetries = 3;
 	}
 

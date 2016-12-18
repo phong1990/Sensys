@@ -73,7 +73,7 @@ public class InitiatorSensorHandshake extends InitiatorRRConversation {
 							replyMessage.isSuccess(), replyMessage.getNote(),replyMessage.getSensorType());
 					// add this sensor to the Sensor receiving List 
 					SensorManager senMan = SensorManager.getInstance();
-					senMan.addNewSensor(replyMessage.getSensorType(), replyMessage.getEndPoint());
+					senMan.addNewSensor(replyMessage.getSensorType(), reply.getEndPoint());
 					
 					ErrorMessage = null; // this mean successfully received the
 											// data.

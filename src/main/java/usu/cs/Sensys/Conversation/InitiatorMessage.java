@@ -14,7 +14,7 @@ public class InitiatorMessage extends InitiatorRRConversation {
 	private boolean isEmmergency = false;
 	private PublicEndpoint _endpoint;
 	private volatile MessageReply RespondedMessage = null;
-
+	private String message;
 	public MessageReply getResult() {
 		return RespondedMessage;
 	}
@@ -25,7 +25,7 @@ public class InitiatorMessage extends InitiatorRRConversation {
 		return false;
 	}
 
-	public InitiatorMessage(String host, int port, boolean emmergency) {
+	public InitiatorMessage(String host, int port, boolean emmergency, String msg) {
 		// TODO Auto-generated constructor stub
 		isEmmergency = emmergency;
 		_endpoint = new PublicEndpoint(host, port);
@@ -34,6 +34,7 @@ public class InitiatorMessage extends InitiatorRRConversation {
 		}else
 			TimeOut = 10000; // 10s
 		MaxRetries = 3;
+		message = msg;
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public class InitiatorMessage extends InitiatorRRConversation {
 		TransactionLock.lock();
 		{
 			MessageNumber messageID = createQueue();
-			Message msg = new MessageRequest(isEmmergency, "Test message");
+			Message msg = new MessageRequest(isEmmergency, message);
 			msg.setConversationId(ConversationId);
 			msg.setMessageNr(messageID);
 			envelop = new Envelope(msg, _endpoint);

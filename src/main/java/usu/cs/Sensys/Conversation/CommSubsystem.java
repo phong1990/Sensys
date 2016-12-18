@@ -9,6 +9,11 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Enumeration;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,21 +23,25 @@ import javax.xml.ws.Endpoint;
 import org.apache.log4j.Logger;
 
 import usu.cs.Sensys.Conversation.Conversation.PossibleState;
+import usu.cs.Sensys.Main.SensorDataManager;
 import usu.cs.Sensys.Main.SensorManager;
+import usu.cs.Sensys.Main.ServerLoginManager;
 import usu.cs.Sensys.Messages.AvailableSensorRequest;
 import usu.cs.Sensys.Messages.HeartbeatRequest;
 import usu.cs.Sensys.Messages.LoginRequest;
 import usu.cs.Sensys.Messages.MessageRequest;
 import usu.cs.Sensys.Messages.SensorGatheringRequest;
+import usu.cs.Sensys.Messages.SensorHandshakeRequest;
 import usu.cs.Sensys.SharedObjects.GPSLocation;
 import usu.cs.Sensys.SharedObjects.MessageNumber;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
 import usu.cs.Sensys.SharedObjects.SensorData;
+import usu.cs.Sensys.util.PublicKeyManager;
 
 public class CommSubsystem {
 	final static Logger logger = Logger.getLogger(CommSubsystem.class);
 	private static CommSubsystem instance = null;
-	private static final int GLOBAL_TIMEOUT = 2000;
+	public static final int GLOBAL_TIMEOUT = 2000;
 
 	public static CommSubsystem getInstance() {
 		if (instance == null)
@@ -73,51 +82,29 @@ public class CommSubsystem {
 			if (convo != null) {
 				String typeOfMessage = env.getMsg().getMessageType();
 				if (typeOfMessage.equals(LoginRequest.class.getName())) {
-					// first add the user to our business list so we know he
-					// will be sending data from now on
-					// <unimplemented>
-
-					// now reply to him, saying we accept his login session
-					ResponderLogin specificConvo = (ResponderLogin) convo;
-					specificConvo.setIncomingEnv(env);
-					// put it in the threadpool and execute it
-					_threadPool.execute(specificConvo);
+					handleLoginRequest(env, convo);
 				}
 				if (typeOfMessage.equals(MessageRequest.class.getName())) {
-					// first add the user to our business list so we know he
-					// will be sending data from now on
-					// <unimplemented>
+					handleMessageRequest(env, convo);
 
-					// now reply to him, saying we accept his login session
-					ResponderMessage specificConvo = (ResponderMessage) convo;
-					specificConvo.setIncomingEnv(env);
-					// put it in the threadpool and execute it
-					_threadPool.execute(specificConvo);
 				}
+				if (typeOfMessage
+						.equals(SensorHandshakeRequest.class.getName())) {
+					handleSensorHandshakeRequest(env, convo);
 
+				}
+				if (typeOfMessage
+						.equals(AvailableSensorRequest.class.getName())) {
+					handleAvailableSensorRequest(env);
+				}
 				if (typeOfMessage
 						.equals(SensorGatheringRequest.class.getName())) {
-					// first add the user to our business list so we know he
-					// will be sending data from now on
-					// <unimplemented>
-
-					// now reply to him, saying we accept his login session
-					ResponderSensorGathering specificConvo = (ResponderSensorGathering) convo;
-					specificConvo.setIncomingEnv(env);
-					// put it in the threadpool and execute it
-					_threadPool.execute(specificConvo);
+					handleSensorGatheringRequest(env, convo);
 				}
 
 				if (typeOfMessage.equals(HeartbeatRequest.class.getName())) {
-					// first add the user to our business list so we know he
-					// will be sending data from now on
-					// <unimplemented>
 
-					// now reply to him, saying we accept his login session
-					ResponderHeartbeat specificConvo = (ResponderHeartbeat) convo;
-					specificConvo.setIncomingEnv(env);
-					// put it in the threadpool and execute it
-					_threadPool.execute(specificConvo);
+					handleHeartBeatRequest(env, convo);
 				}
 			}
 		} else {
@@ -127,12 +114,80 @@ public class CommSubsystem {
 
 	}
 
+	private static void handleAvailableSensorRequest(Envelope env) {
+		if (SensorManager.getInstance().isAcceptingNewSensors()) {
+			instance.handshakeWithSensor(env.getEndPoint().getHost(),
+					env.getEndPoint().getPort());
+		}
+	}
+
+	private static void handleHeartBeatRequest(Envelope env,
+			Conversation convo) {
+		ResponderHeartbeat specificConvo = (ResponderHeartbeat) convo;
+		specificConvo.setIncomingEnv(env);
+		ServerLoginManager.getInstance().resetTimer(env.getEndPoint());
+		// put it in the threadpool and execute it
+		_threadPool.execute(specificConvo);
+	}
+
+	private static void handleSensorHandshakeRequest(Envelope env,
+			Conversation convo) {
+		ResponderSensorHandshake specificConvo = (ResponderSensorHandshake) convo;
+		specificConvo.setIncomingEnv(env);
+		if (!SensorDataManager.getInstance().isOCCUPIED())
+			SensorDataManager.getInstance().setOCCUPIED(true);
+		// put it in the threadpool and execute it
+		_threadPool.execute(specificConvo);
+	}
+
+	private static void handleSensorGatheringRequest(Envelope env,
+			Conversation convo) {
+		ResponderSensorGathering specificConvo = (ResponderSensorGathering) convo;
+		specificConvo.setIncomingEnv(env);
+		// put it in the threadpool and execute it
+		_threadPool.execute(specificConvo);
+	}
+
+	private static void handleLoginRequest(Envelope env, Conversation convo) {
+		// first add the user to our business list so we know he
+		// will be sending data from now on
+		ServerLoginManager.getInstance().addNewUser(env.getEndPoint());
+
+		// now reply to him, saying we accept his login session
+		ResponderLogin specificConvo = (ResponderLogin) convo;
+		specificConvo.setIncomingEnv(env);
+		// put it in the threadpool and execute it
+		_threadPool.execute(specificConvo);
+
+	}
+
+	private static void handleMessageRequest(Envelope env, Conversation convo) {
+		MessageRequest reqMsg = (MessageRequest) env.getMsg();
+		try {
+			if (PublicKeyManager.getInstance().verirySignature(
+					PublicKeyManager.getInstance().getForeginPublicKey(),
+					reqMsg.getSignature(), reqMsg.getMessage())) {
+				System.out.println("Received a message from server: "
+						+ reqMsg.getMessage());
+				ResponderMessage specificConvo = (ResponderMessage) convo;
+				specificConvo.setIncomingEnv(env);
+				// put it in the threadpool and execute it
+				_threadPool.execute(specificConvo);
+			}
+		} catch (InvalidKeyException | InvalidKeySpecException
+				| NoSuchAlgorithmException | NoSuchProviderException
+				| SignatureException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 	public static void handleBroadcastedMessage(Envelope env) {
 		SensorManager senMan = SensorManager.getInstance();
 
 		String typeOfMessage = env.getMsg().getMessageType();
 		if (typeOfMessage.equals(AvailableSensorRequest.class.getName())) {
-			senMan.shakeHandWithSensor((AvailableSensorRequest) env.getMsg());
+			senMan.shakeHandWithSensor( env);
 		}
 	}
 
@@ -180,6 +235,7 @@ public class CommSubsystem {
 		while (!_threadPool.isTerminated()) {
 		}
 		logger.debug("Leaving Stop");
+		instance = null;
 	}
 
 	public <T extends Conversation> T CreateFromConversationType(
@@ -236,16 +292,10 @@ public class CommSubsystem {
 
 			while (networkInterfaces.hasMoreElements()) {
 
-				
-				
-				
-				
-				
-				
 				////////
 				NetworkInterface networkInterface = networkInterfaces
 						.nextElement();
-				
+
 				byte[] hardwareAddress = networkInterface.getHardwareAddress();
 				if (null == hardwareAddress || 0 == hardwareAddress.length
 						|| (0 == hardwareAddress[0] && 0 == hardwareAddress[1]
@@ -273,6 +323,13 @@ public class CommSubsystem {
 		// TODO Auto-generated method stub
 		InitiatorLogin loginConvo = new InitiatorLogin(iden, pin, host, port);
 		return (InitiatorLogin) startConversation(loginConvo);
+	}
+
+	public InitiatorMessage sendMessage(String message, String host, int port) {
+		// TODO Auto-generated method stub
+		InitiatorMessage convo = new InitiatorMessage(host, port, false,
+				message);
+		return (InitiatorMessage) startConversation(convo);
 	}
 
 	public InitiatorSensorHandshake handshakeWithSensor(String host, int port) {

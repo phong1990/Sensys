@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import usu.cs.Sensys.Conversation.CommProcessState;
 import usu.cs.Sensys.Conversation.CommSubsystem;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
+import usu.cs.Sensys.util.PublicKeyManager;
 
 /**
  * Hello world!
@@ -18,8 +19,11 @@ public class ServerSimulator {
 
 		CommSubsystem communicationSubsystem = CommSubsystem.getInstance();
 
+		ServerLoginManager loginMan = ServerLoginManager.getInstance();
 		try {
 			System.out.println("---- SENSYS server simulator ----");
+			PublicKeyManager.getInstance().makeKey();
+			loginMan.start();
 			br = new BufferedReader(new InputStreamReader(System.in));
 			communicationSubsystem.Start();
 			PublicEndpoint myEndpoint = communicationSubsystem.getMyEndpoint();
@@ -35,6 +39,7 @@ public class ServerSimulator {
 
 				if ("exit".equalsIgnoreCase(input)) {
 					System.out.println("Exit!");
+					communicationSubsystem.Stop();
 					System.exit(0);
 				}
 				try {
@@ -60,6 +65,7 @@ public class ServerSimulator {
 				communicationSubsystem.Stop();
 				communicationSubsystem = null;
 			}
+			loginMan.stop();
 		}
 	}
 }

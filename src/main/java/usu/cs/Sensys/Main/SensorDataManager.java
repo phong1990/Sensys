@@ -10,12 +10,13 @@ public class SensorDataManager {
 	private PublicEndpoint ReciepientEndpoint = null;
 	private static SensorDataManager instance = null;
 	private CommSubsystem commSub = CommSubsystem.getInstance();
+
 	public static SensorDataManager getInstance() {
 		if (instance == null)
 			instance = new SensorDataManager();
 		return instance;
 	}
-	
+
 	public int getSensorType() {
 		return SensorType;
 	}
@@ -48,11 +49,14 @@ public class SensorDataManager {
 		else
 			ReciepientEndpoint = null;
 	}
-	public void startSensorBroadcast(){
+
+	public void startSensorBroadcast() {
 		commSub.StartSensorBroadcast();
 	}
-	public void sendData(){
+
+	public void sendData() {
 		// send dummy data
-		commSub.sendData(ReciepientEndpoint,new SensorData(SensorType, "1234"));
+		commSub.sendData(ReciepientEndpoint,
+				new SensorData(SensorType, "1234"));
 	}
 }

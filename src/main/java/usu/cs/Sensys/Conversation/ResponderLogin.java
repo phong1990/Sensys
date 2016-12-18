@@ -7,16 +7,19 @@ import usu.cs.Sensys.Messages.Message;
 import usu.cs.Sensys.SharedObjects.Identity;
 import usu.cs.Sensys.SharedObjects.MessageNumber;
 import usu.cs.Sensys.SharedObjects.PublicEndpoint;
+import usu.cs.Sensys.util.PublicKeyManager;
 
-public class ResponderLogin extends ResponderRRConversation{
+public class ResponderLogin extends ResponderRRConversation {
 	@Override
 	protected boolean Initialize() {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
 	public ResponderLogin() {
 		// TODO Auto-generated constructor stub
 	}
+
 	@Override
 	protected void ExecuteDetails() {
 		// TODO Auto-generated method stub
@@ -27,17 +30,18 @@ public class ResponderLogin extends ResponderRRConversation{
 		TransactionLock.lock();
 		{
 			MessageNumber messageID = setupQueue();
-			Message msg = new LoginReply(true, "", CommSubsystem.getMyEndpoint());
+			Message msg = new LoginReply(true, "",
+					CommSubsystem.getMyEndpoint(),
+					PublicKeyManager.getInstance().getPublicKey());
 			msg.setConversationId(ConversationId);
 			msg.setMessageNr(messageID);
-			envelop = new Envelope(msg,IncomingEnv.getEndPoint());
+			envelop = new Envelope(msg, IncomingEnv.getEndPoint());
 		}
 		TransactionLock.unlock();
 
 		// send envelop
 		sendMessage(envelop);
 	}
-
 
 	@Override
 	protected boolean isExpectedMessageType(String messageType) {

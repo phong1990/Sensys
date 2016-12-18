@@ -1,5 +1,6 @@
 package usu.cs.Sensys.Messages;
 
+
 public abstract class Reply extends Message{
 	private boolean Success;
 	private String Note;
